@@ -1,0 +1,26 @@
+Prompt mình sử dụng tron video:
+
+Tôi muốn viết phần mềm tính thuế thu nhập cá nhân theo luật Thuế của Việt Nam. Đối tượng sử dụng là Nhân viên Kế toán.  Phần mềm gồm các chức năng sau:
+
+
+# Chức năng quản lý nhân viên:
+- Thực hiện CRUD và xem danh sách nhân viên. Mỗi nhân viên cần quản lý các thông tin: Mã nhân viên, Họ tên, Đơn vị, Mã số thuế, Số CCCD. Một check box để đánh dấu nhân viên đã nghỉ việc.
+- Import danh sách nhân viên từ file excel.
+
+# Quản lý người phụ thuộc:
+- Thực hiện CRUD người phụ thuộc của nhân viên. Mỗi người phụ thuộc cần theo dõi thông tin: Họ tên, Mối quan hệ, Ngày sinh, Mã số thuế (nếu có), Số CCCD,  Thời gian giảm trừ (từ tháng năm nào đến tháng năm nào), checkbox để đánh dấu không còn sử dụng (không tính giảm trừ).
+
+# Tính thuế TNCN:
+- Mỗi tháng, nhân viên Kế toán import dữ liệu thu nhập của người lao động từ file excel gồm các cột sau: MaNV (text), HoTen (text), MaSoThue (text), TongThuNhap (number, tổng thu nhập trong tháng của nhân viên), KhgChiuThue  (number, tổng thu nhập không chịu thuế), BaoHiem  (number, tổng tiền chi cho các khoản: bảo hiểm y tế, bảo hiểm xã hội,...).
+- Xem được lịch sử đóng thuế của toàn bộ nhân viên theo tháng.
+- Nếu người phụ thuộc đã hết thời gian giảm trừ thì không được tính vào phần giảm trừ của nhân viên.
+
+# Yêu cầu:
+- Sử dụng Supabase MCP để tạo bảng cho cơ sở dữ liệu.
+- Dùng Supabase để xác thực người dùng  
+- Người dùng phải đăng nhập thành công vào hệ thống để thực hiện các chức năng.
+- Các biến môi trường phải được lưu trong file .env
+- Thiết kế responsive (hoạt động tốt trên cả điện thoại và máy tính) 
+- Giao diện hoàn toàn bằng tiếng Việt.
+- Áp dụng giao diện hiện đại, sạch sẽ với Tailwind CSS  
+- Sử dụng React

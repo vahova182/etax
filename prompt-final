@@ -1,0 +1,94 @@
+# PROMPT FINAL - HOÀN THIỆN DỰ ÁN ETAX
+
+Đây là yêu cầu chi tiết để xây dựng và hoàn thiện phần mềm tính thuế thu nhập cá nhân (TNCN) "eTax".
+
+## 1. MỤC TIÊU DỰ ÁN
+Xây dựng ứng dụng web tính thuế TNCN theo luật Thuế Việt Nam hiện hành.
+- **Đối tượng sử dụng:** Nhân viên Kế toán.
+- **Mục đích:** Quản lý nhân viên, người phụ thuộc và tính toán thuế TNCN hàng tháng chính xác, nhanh chóng.
+
+## 2. CÔNG NGHỆ SỬ DỤNG (TECH STACK)
+- **Frontend:** React (Vite), JavaScript.
+- **UI Framework:** Tailwind CSS (thiết kế hiện đại, sạch sẽ, responsive).
+- **Backend/Database:** Supabase (Sử dụng MCP để quản lý database, Authentication).
+- **Xử lý file:** Thư viện `xlsx` để import dữ liệu từ Excel.
+- **Router:** React Router DOM.
+- **Icons:** Lucide React.
+
+## 3. CÁC CHỨC NĂNG CHÍNH
+
+### A. Xác thực người dùng (Authentication)
+- Đăng nhập hệ thống sử dụng Supabase Auth.
+- Bảo vệ các routes: Người dùng chưa đăng nhập không thể truy cập vào các trang chức năng.
+
+### B. Quản lý Nhân viên (Employees)
+- **Danh sách nhân viên:** Hiển thị danh sách dạng bảng, có phân trang hoặc cuộn.
+- **Thông tin nhân viên:**
+  - Mã nhân viên (duy nhất)
+  - Họ và tên
+  - Đơn vị/Phòng ban
+  - Mã số thuế cá nhân
+  - Số CCCD/CMND
+  - Trạng thái: Đang làm việc / Đã nghỉ việc (Checkbox)
+- **Chức năng:**
+  - Thêm mới, Sửa, Xóa nhân viên.
+  - **Import Excel:** Cho phép tải lên file Excel danh sách nhân viên để thêm hàng loạt.
+  - Tìm kiếm nhân viên theo tên hoặc mã.
+
+### C. Quản lý Người phụ thuộc (Dependents)
+- **Danh sách người phụ thuộc:** Gắn liền với từng nhân viên.
+- **Thông tin người phụ thuộc:**
+  - Họ và tên
+  - Mối quan hệ với nhân viên
+  - Ngày sinh
+  - Mã số thuế (nếu có)
+  - Số CCCD (nếu có)
+  - **Thời gian giảm trừ:** Từ tháng/năm đến tháng/năm.
+  - Trạng thái: Còn hiệu lực / Không còn hiệu lực (Checkbox để đánh dấu không tính giảm trừ).
+- **Chức năng:**
+  - CRUD (Thêm, Xem, Sửa, Xóa) người phụ thuộc cho từng nhân viên.
+  - Khi tính thuế, hệ thống phải tự động kiểm tra thời gian giảm trừ để quyết định có được tính hay không.
+
+### D. Tính thuế TNCN (Tax Calculation)
+- **Quy trình tính thuế hàng tháng:**
+  1. Chọn Tháng/Năm tính thuế.
+  2. **Import dữ liệu thu nhập:** Tải lên file Excel chứa thông tin thu nhập của tháng đó.
+     - Cấu trúc file import: `MaNV`, `HoTen`, `MaSoThue`, `TongThuNhap`, `KhongChiuThue` (ăn trưa, điện thoại...), `BaoHiem` (BHXH, BHYT, BHTN trừ vào lương).
+  3. **Xử lý tính toán:**
+     - Tự động lấy thông tin giảm trừ gia cảnh (Bản thân + Người phụ thuộc hợp lệ) từ hệ thống.
+     - Áp dụng công thức lũy tiến từng phần theo quy định hiện hành.
+  4. **Kết quả:**
+     - Hiển thị bảng tính chi tiết: Tổng thu nhập, Các khoản giảm trừ, Thu nhập tính thuế, Thuế TNCN phải nộp.
+     - Lưu lịch sử tính thuế vào cơ sở dữ liệu.
+- **Xem lịch sử:** Xem lại bảng tính thuế của các tháng trước đó.
+
+## 4. QUY ĐỊNH NGHIỆP VỤ TÍNH THUẾ (LOGIC CỐT LÕI)
+- **Giảm trừ bản thân:** 11.000.000 VNĐ/tháng.
+- **Giảm trừ người phụ thuộc:** 4.400.000 VNĐ/người/tháng.
+- **Công thức:** 
+  `Thu nhập tính thuế = Tổng thu nhập - Thu nhập không chịu thuế - Bảo hiểm - Giảm trừ bản thân - Giảm trừ NPT`
+- **Biểu thuế lũy tiến từng phần:**
+  - Bậc 1: Đến 5 trđ -> 5%
+  - Bậc 2: Trên 5 trđ đến 10 trđ -> 10%
+  - Bậc 3: Trên 10 trđ đến 18 trđ -> 15%
+  - Bậc 4: Trên 18 trđ đến 32 trđ -> 20%
+  - Bậc 5: Trên 32 trđ đến 52 trđ -> 25%
+  - Bậc 6: Trên 52 trđ đến 80 trđ -> 30%
+  - Bậc 7: Trên 80 trđ -> 35%
+- **Điều kiện giảm trừ NPT:** Chỉ tính nếu tháng tính thuế nằm trong khoảng "Từ tháng" đến "Đến tháng" (nếu có) và trạng thái là đang hoạt động.
+
+## 5. YÊU CẦU PHI CHỨC NĂNG
+- **Giao diện:** 
+  - Ngôn ngữ: Tiếng Việt 100%.
+  - Thiết kế: Hiện đại, chuyên nghiệp, dễ nhìn (phù hợp cho Kế toán làm việc nhiều với số liệu).
+  - Responsive: Tương thích tốt trên Desktop và Mobile.
+- **Bảo mật:** Biến môi trường (Supabase URL, Key) phải lưu trong `.env`.
+- **Cấu trúc code:** Tổ chức file rõ ràng (`src/components`, `src/pages`, `src/lib`, `src/context`), code sạch, dễ bảo trì.
+
+## 6. CẤU TRÚC DỮ LIỆU DỰ KIẾN (SUPABASE)
+- Bảng `employees`: id, code, full_name, unit, tax_code, citizen_id, is_resigned, ...
+- Bảng `dependents`: id, employee_id, full_name, relationship, dob, tax_code, deduction_from, deduction_to, is_disabled, ...
+- Bảng `tax_records`: id, employee_id, month, year, total_income, non_taxable_income, insurance_deduction, self_deduction, dependent_deduction, taxable_income, tax_amount, ...
+
+---
+Dùng file này làm "kim chỉ nam" để hoàn thiện các chức năng còn thiếu hoặc tối ưu hóa dự án.
